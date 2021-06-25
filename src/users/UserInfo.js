@@ -10,7 +10,7 @@ export default function UserInfo() {
             <ul>
                 {users.map((u) => {
                     return (
-                        <div>
+                        <div key={u}>
                             <li key={u}>name: {u}</li>
                             <button
                                 onClick={(e) => {
