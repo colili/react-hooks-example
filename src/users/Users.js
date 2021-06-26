@@ -1,9 +1,21 @@
 // import axios from "axios";
 import { useEffect, useState } from "react";
 
+const userList = [
+    { id: "jonsnow", name: "Snow Jon", age: 35, sex: "Male" },
+    { id: "cerseilanni", name: "Lannister Cersei", age: 42, sex: "Female" },
+    { id: "jaimelanni", name: "Lannister Jaime", age: 45, sex: "Male" },
+    { id: "aryastark", name: "Stark Arya", age: 16, sex: "Female" },
+    { id: "daenerys", name: "Targaryen Daenerys", age: null, sex: "Male" },
+    { id: "melisandre", name: "Melisandre", age: 150, sex: null },
+    { id: "ferraraclif", name: "Clifford Ferrara", age: 44, sex: "Male" },
+    { id: "rossini", name: "Frances Rossini", age: 36, sex: "Male" },
+    { id: "harveyroxie", name: "Roxie Harvey", age: 65, sex: "Male" },
+];
+
 export default function useUsers() {
     const [users, setUsers] = useState([]);
-    const userList = ["Alice", "Bob", "Colin", "Doug"];
+    // const userList = ["Alice", "Bob", "Colin", "Doug"];
 
     useEffect(() => {
         // axios.get("https://api.github.com/users").then((resp) => {
@@ -15,16 +27,17 @@ export default function useUsers() {
     }, []);
 
     const deleteUser = (id) => {
+        // TODO: useReducer
         const newUsers = users.filter((user) => {
-            return user !== id;
+            return user.id !== id;
         });
-        setUsers(newUsers);
+        setUsers([...newUsers]);
     };
 
-    const addUser = (id) => {
-        if (id) {
-            users.push(id);
-            setUsers([...users]);
+    const addUser = (user) => {
+        console.log("adding user: ", user);
+        if (user) {
+            setUsers([user, ...users]);
         } else {
             alert("User is empty!");
         }
