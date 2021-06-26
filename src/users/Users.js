@@ -26,16 +26,13 @@ export default function useUsers() {
         setUsers(userList);
     }, []);
 
-    const deleteUser = (id) => {
+    const deleteUsers = (ids) => {
         // TODO: useReducer
-        const newUsers = users.filter((user) => {
-            return user.id !== id;
-        });
+        const newUsers = users.filter((user) => !ids.includes(user.id));
         setUsers([...newUsers]);
     };
 
     const addUser = (user) => {
-        console.log("adding user: ", user);
         if (user) {
             setUsers([user, ...users]);
         } else {
@@ -43,5 +40,5 @@ export default function useUsers() {
         }
     };
 
-    return [users, addUser, deleteUser];
+    return [users, addUser, deleteUsers];
 }
