@@ -34,7 +34,7 @@ export default function useUsers(initialValue) {
                 if (user.id === newUser.id) {
                     found = true;
                     const index = users.indexOf(user);
-                    console.log("user index:", index);
+                    // console.log("user index:", index);
                     Object.assign(user, newUser);
                     eUsers.splice(index, 1, user);
                     // console.log(users);
@@ -44,7 +44,7 @@ export default function useUsers(initialValue) {
                 eUsers.unshift(newUser);
             }
         }
-        console.log("final:", eUsers);
+        // console.log("final:", eUsers);
         setUsers([...eUsers]);
     };
 
@@ -55,9 +55,9 @@ export default function useUsers(initialValue) {
 
     const addUsers = (newUsers) => {
         if (newUsers) {
-            console.log("to add:", newUsers);
+            // console.log("to add:", newUsers);
             const data = [...newUsers, ...users];
-            console.log("after add:", data);
+            // console.log("after add:", data);
             setUsers([...data]);
         }
     };
