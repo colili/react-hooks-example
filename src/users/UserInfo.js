@@ -1,11 +1,10 @@
 import IconButton from "@material-ui/core/IconButton";
 import { DataGrid, GridToolbar } from "@material-ui/data-grid";
-import DeleteIcon from "@material-ui/icons/Delete";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import { React, useState, useEffect } from "react";
-import useUsers from "./Users";
+import DeleteIcon from "@material-ui/icons/Delete";
 import { nanoid } from "nanoid";
-// import { GRID_CELL_EDIT_EXIT, useGridApiRef, XGrid } from "@material-ui/x-grid";
+import { React, useState } from "react";
+import useUsers from "./Users";
 
 const columns = [
     { field: "id", headerName: "用户名", width: 120, editable: false },
@@ -15,55 +14,36 @@ const columns = [
 ];
 
 export default function DataTable() {
-    const [users, addUser, deleteUsers] = useUsers();
+    const [users, addUsers, updateUsers, deleteUsers] = useUsers([]);
 
     const [selected, setSelected] = useState([]);
     const [showDelBtn, setShowDelBtn] = useState(false);
-    // const apiRef = useGridApiRef();
 
     const handleSelection = (params) => {
-        const { data } = params;
-        const { id } = data;
-
-        const selectedIndex = selected.indexOf(id);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-
-        if (newSelected.length > 0) {
-            setShowDelBtn(true);
-        } else {
-            setShowDelBtn(false);
-        }
-
+        const newSelected = params.selectionModel;
+        // console.log(newSelected);
+        setShowDelBtn(newSelected.length > 0);
         setSelected(newSelected);
     };
 
-    const handleAddUser = () => {
-        addUser({ id: nanoid() });
+    const handleAddUser = (users) => {
+        // console.log("to add users:", users);
+        addUsers(users);
     };
 
-    const handleDeleteUser = () => {
-        deleteUsers(selected);
+    const handleDeleteUser = (ids) => {
+        deleteUsers(ids);
         setSelected([]);
     };
 
-    /* useEffect(() => {
-        console.log(apiRef);
-        return apiRef.current.subscribeEvent(GRID_CELL_EDIT_EXIT, (params, event) => {
-            console.log(
-                `Editing cell with value: ${params.value} and row id: ${params.id}, column: ${params.field}, triggered by ${event.type}.`
-            );
-        });
-    }, [apiRef]); */
+    const handleUpdateUser = (params) => {
+        console.log(params);
+        const { id, field, props } = params;
+        const { value } = props;
+        const newUser = { id, [field]: value };
+        console.log("user to update", newUser);
+        updateUsers([newUser]);
+    };
 
     return (
         <div style={{ height: 400, width: "100%" }}>
@@ -73,16 +53,17 @@ export default function DataTable() {
                 pageSize={5}
                 checkboxSelection
                 disableSelectionOnClick
-                onRowSelected={(params) => {
+                onSelectionModelChange={(params) => {
                     handleSelection(params);
                 }}
+                onEditCellChangeCommitted={(params) => handleUpdateUser(params)}
                 components={{ Toolbar: GridToolbar }}
             />
-            <IconButton onClick={handleAddUser} aria-label="add">
+            <IconButton onClick={() => handleAddUser([{ id: nanoid() }])} aria-label="add">
                 <CloudUploadIcon />
             </IconButton>
             {showDelBtn && (
-                <IconButton onClick={handleDeleteUser} aria-label="delete">
+                <IconButton onClick={() => handleDeleteUser(selected)} aria-label="delete">
                     <DeleteIcon />
                 </IconButton>
             )}
